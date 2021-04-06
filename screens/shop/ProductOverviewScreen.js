@@ -47,25 +47,22 @@ const ProductOverviewScreen = props=>{
     },[dispatch,setIsLoading,setError])
 
 
-    // useEffect(()=>{
-    //     const willFocusSub = props.navigation.addListener(
-    //         'willFocus',
-    //         loadingProducts()
-    //       );
-      
-    //       console.log(willFocusSub);
-
-    //       return () => {
-    //         willFocusSub.remove();
-    //       };
-
-          
-
-    // },[loadingProducts])
+    useEffect(()=>{
+        const unsubscribe = props.navigation.addListener(
+            'focus',
+            loadingProducts
+          );
+          return () => {
+            unsubscribe();
+          };
+    },[loadingProducts])
 
     useEffect(()=>{
-        loadingProducts();
-    },[loadingProducts])
+        setIsLoading(true);
+        loadingProducts().then(() => {
+          setIsLoading(false);
+        });
+    },[dispatch,loadingProducts])
 
     if(error){
         return (
@@ -110,7 +107,7 @@ const ProductOverviewScreen = props=>{
                 onSelect = {()=>{  selectItemHandler(renderData.item.id,renderData.item.title) }}                
                 >
                     <Button color={Colors.Primary} title="View Details" onPress={()=>selectItemHandler(renderData.item.id,renderData.item.title)} />
-                    <Button color={Colors.Primary} title="To Cart" onPress={dispatch(cartActions.addToCart(renderData.item))} />
+                    <Button color={Colors.Primary} title="To Cart" onPress={()=>{dispatch(cartActions.addToCart(renderData.item))}} />
                 </ProductItem>
             )}
         />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState,useLayoutEffect } from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Platform,KeyboardAvoidingView, Alert } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -35,7 +35,7 @@ const FORM_INPUT_UPDATE=(state,action)=>{
 
 
 const EditProductScreen = props => {
-    const prodId = props.route.params.productId;
+    const prodId = props.route.params? props.route.params.productId: null;
     const editedProduct = useSelector(state => state.products.userProduct.find(p => p.id == prodId));
 
 
@@ -61,6 +61,7 @@ const EditProductScreen = props => {
 
     
   const submitHandler = useCallback(() => {
+    console.log('submit handler called')
     if (!formState.formIsValid) {
       Alert.alert('Wrong input!', 'Please check the errors in the form.', [
         { text: 'Okay' }
@@ -68,8 +69,9 @@ const EditProductScreen = props => {
       return;
     }
     if (editedProduct) {
-        console.log(' update product called.')
-        console.log(formState);
+      console.log('submit handler called updated')
+      console.log(prodId)
+      console.log(formState.inputValues)
       dispatch(
         productActions.updateProduct(
           prodId,
@@ -80,6 +82,7 @@ const EditProductScreen = props => {
         )
       );
     } else {
+      console.log('submit handler called add')
       dispatch(
         productActions.createProduct(
           formState.inputValues.title,
@@ -93,12 +96,27 @@ const EditProductScreen = props => {
   }, [dispatch, prodId, formState]);
 
     useEffect(()=>{
-        props.navigation.setParams({submit:submitHandler})
-    },[ submitHandler])
+      //console.log(props);
+        props.navigation.setOptions({
+          headerRight: () => (
+            <HeaderButtons HeaderButtonComponent={HeaderButton} >
+                <Item
+                    title="Save"
+                    iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
+                    onPress={submitHandler}
+                />
+            </HeaderButtons>
+        )
+         })
+    },[props.navigation,submitHandler])
 
 
     const inputChangeHandler = useCallback(
-        (inputIdentifier, inputValue, inputValidity) => {
+      (inputIdentifier, inputValue, inputValidity) => {
+          console.log('inputChangeHandler called ');
+          console.log(inputIdentifier);
+          console.log(inputValue);
+          console.log(inputValidity);
           dispatchFormState({
             type: UPDATE_FORM,
             value: inputValue,
@@ -175,18 +193,11 @@ const EditProductScreen = props => {
 }
 
 export const screenOptions = navData => {
-    const submitFn =  navData.route.params.submit;
+    //const submitFn =  navData.route.params? navData.route.params.submit: null;
+    const routeParams = navData.route.params? navData.route.params : {}
     return {
-        headerTitle: navData.route.params.productId ? 'Edit Product' : 'Add Product',
-        headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={HeaderButton} >
-                <Item
-                    title="Save"
-                    iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={submitFn}
-                />
-            </HeaderButtons>
-        )
+        headerTitle: routeParams.productId ? 'Edit Product' : 'Add Product',
+      
     }
 }
 

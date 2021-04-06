@@ -5,11 +5,12 @@ export const SET_ORDER = 'SET_ORDER';
 
 export const addOrder = (cartItems, totalAmount) => {
     try {
-        return async dispatch => {
+        return async (dispatch, getState) => {
             let response;
             const date = new Date();
-
-            response = await fetch('https://shopapp-785d1-default-rtdb.firebaseio.com/orders/u1.json', {
+            const token = getState().auth.token;
+            const userId =getState().auth.userId;
+            response = await fetch(`https://shopapp-785d1-default-rtdb.firebaseio.com/orders/${userId}.json?auth=${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -42,10 +43,10 @@ export const addOrder = (cartItems, totalAmount) => {
 }
 
 export const fetchOrders = () => {
-    console.log('fetchOrders called');
     try {
-        return async dispatch => {
-            const response = await fetch('https://shopapp-785d1-default-rtdb.firebaseio.com/orders/u1.json',
+        return async (dispatch, getState) => {
+            const userId =getState().auth.userId;
+            const response = await fetch(`https://shopapp-785d1-default-rtdb.firebaseio.com/orders/${userId}.json`,
             {
             method: 'GET'});
 
@@ -54,8 +55,6 @@ export const fetchOrders = () => {
             }
 
             const respData = await response.json();
-            console.log('fetch corders');
-            console.log(respData);
             let loadedOrders = [];
             for (const key in respData) {
                 loadedOrders.push(

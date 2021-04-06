@@ -27,6 +27,15 @@ const UserProductScreen = props => {
             ]
         )
     }
+
+    if(userProduct.length === 0){
+        return (
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <Text>No products found, maybe start creating some?</Text>
+            </View>
+        )
+    }
+
     return (
         <FlatList
             data={userProduct}

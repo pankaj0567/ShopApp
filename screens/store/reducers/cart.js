@@ -9,12 +9,6 @@ const initialState = {
 }
 
 export default (state = initialState,action)=>{
-    //return state;
-
-
-    // console.log('cart reducer');
-    // console.log(action);
-    // return state;
     switch (action.type) {
         case ADD_TO_CART:
                 const addedProduct = action.product;
@@ -44,8 +38,6 @@ export default (state = initialState,action)=>{
                 }
 
         case REMOVE_FROM_CART:
-            console.log(REMOVE_FROM_CART);
-            console.log(state)
                 const selectedCartItem = state.items[action.pid];
                 const currentQty = selectedCartItem.quantity;
                 let updatedCartItems;

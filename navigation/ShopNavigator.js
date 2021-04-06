@@ -16,44 +16,8 @@ import { HeaderButton, HeaderButtons, Item } from 'react-navigation-header-butto
 import { useDispatch } from 'react-redux';
 import UserProductScreen,{screenOptions as userProductsScreenOptions} from '../screens/user/UserProductScreen';
 import EditProductScreen,{screenOptions as editProductsScreenOptions} from '../screens/user/EditProductScreen';
-
-// const Stack = createStackNavigator();
-// const Drawer = createDrawerNavigator();
-
-// const OrdersNavigator = props=>{
-//     return (
-//         <Drawer.Navigator>
-//         <Drawer.Screen name="Products" component= {ProductOverviewScreen} />
-//         <Drawer.Screen name="Orders" component= {OrderScreen} />
-//     </Drawer.Navigator>    
-//     );
-// }
-
-// const ShopNavigator = props =>{
-//     return (
-//         <NavigationContainer>
-       
-//             <Stack.Navigator >
-//                 <Stack.Screen name="ProductOverview" component={ProductOverviewScreen} options={{title:'product overview',
-//                       headerRight: () => (
-//                         <TouchableOpacity
-//                           onPress={() => {  }}
-//                         >
-//                             <Ionicons name="md-cart" size={32} color={Colors.Primary} />
-//                          </TouchableOpacity>   
-//                       ),
-//             }}  />
-//                 <Stack.Screen name="ProductDetail" component ={ProductDetailScreen} options ={({route})=>({productTitle:  route.params.title})} />
-//                 <Stack.Screen name="Cart" component ={CartScreen}  />
-//                 <Stack.Screen name="order" component={OrdersNavigator} />
-//             </Stack.Navigator>
-          
-//         </NavigationContainer>
-//     )
-// }
-
-// export default ShopNavigator;
-
+import AuthScreen,{screenOptions as authScreenOptions}  from '../screens/user/AuthScreen';
+import * as authActions from '../screens/store/actions/auth';
 
 const defaultNavOptions={
     headerStyle:{
@@ -111,9 +75,23 @@ export const AdminNavigator =()=>{
                 options={userProductsScreenOptions}
             />
             <AdminStackNavigator.Screen name="Edit" component={EditProductScreen}
-                options={editProductsScreenOptions}
+                
             />
+            {/* <AdminStackNavigator.Screen name="Auth" component={AuthScreen}
+                 options={authScreenOptions}
+            /> */}
         </AdminStackNavigator.Navigator>
+    )
+}
+
+const AuthStackNavigator = createStackNavigator();
+
+export const AuthNavigator = () =>{
+    return (
+        <AuthStackNavigator.Navigator screenOptions={defaultNavOptions}>
+            <AuthStackNavigator.Screen name="Auth" component={AuthScreen}
+                 options={authScreenOptions} />
+        </AuthStackNavigator.Navigator>
     )
 }
 
@@ -124,7 +102,18 @@ export const ShopNavigator = () => {
     const dispatch = useDispatch();
     return (
         <ShopDrawerNavigator.Navigator
-        drawerIcon={props=>{
+        // drawerContent ={ props=> {
+        //     return (
+        //         <View style={{flex:1,paddingTop:20}}>
+        //             <SafeAreaView forceInset = {{top: 'always', horizontal:'never'}}>
+        //                 <Button
+
+        //                 />
+        //             </SafeAreaView>
+        //         </View>
+        //     )
+        // }}
+        drawerContent={props=>{
             return (
                 <View style={{flex:1,paddingTop:20}}>
                     <SafeAreaView forceInset={{top:'always', horizontal: 'never'}}>
@@ -132,7 +121,9 @@ export const ShopNavigator = () => {
                         <Button
                             title="Logout"
                             color= {Colors.Primary}
-                            onPress={()=>{}}
+                            onPress={()=>{
+                                dispatch(authActions.logout());
+                            }}
                         />
                     </SafeAreaView>
                 </View>

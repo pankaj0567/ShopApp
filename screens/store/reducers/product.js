@@ -4,23 +4,21 @@ import { DELETE_PRODUCT, SET_PRODUCTS } from "../actions/product";
 import { CREATE_PRODUCT, UPDATE_PRODUCT } from "../actions/product";
 
 const initialState = {
-    availableProducts : PRODUCTS,
-    userProduct : PRODUCTS.filter(p=>p.ownerId == 'u1')
+    availableProducts : [],
+    userProduct : []
 }
 
 export default (state = initialState,action) =>{
     switch (action.type) {
         case SET_PRODUCTS:
-            console.log('set products called')
-            console.log(action)
             return {
                 availableProducts: action.products,
-                userProduct: action.products.filter(p=>p.ownerId == 'u1')
+                userProduct: action.userProducts
             }
         case CREATE_PRODUCT:
             const newProduct = new Product(
                action.productData.id,
-                'u1',
+               action.productData.ownerId,
                 action.productData.title,
                 action.productData.imageUrl,
                 action.productData.description,
@@ -32,8 +30,6 @@ export default (state = initialState,action) =>{
                 userProduct:state.userProduct.concat(newProduct)
             }
     case UPDATE_PRODUCT:
-        console.log('UPDATE_PRODUCT');
-        console.log(action.pid)
             const productIndex = state.userProduct.findIndex(
                 prod=>prod.id ===action.pid
             );
@@ -46,7 +42,6 @@ export default (state = initialState,action) =>{
                 state.userProduct[productIndex].price
             );
 
-            console.log(updatedProduct);
             const updatedUserProducts = [...state.userProduct];
             updatedUserProducts[productIndex] = updatedProduct;
             const availableProductIndex = state.availableProducts.findIndex(
